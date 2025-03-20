@@ -10,6 +10,8 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/search/kdtree.h>
 
 class ConeDetectorNode : public rclcpp::Node {
 public:
