@@ -74,6 +74,7 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
           is_cone = false;
         }
         else
+          std::cout << "Apice del cono a Z = " << apex_z << std::endl;
           is_cone = true;
       }
 
@@ -88,6 +89,7 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
         is_cone = false;
       }
       else
+        std::cout << "Angolo di apertura del cono: " << opening_angle * 180.0 / M_PI << "°" << std::endl;
         is_cone = true;
     }
     std::cout << "Cone detected!" << std::endl;
