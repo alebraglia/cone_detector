@@ -98,6 +98,7 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
       std_msgs::msg::Bool result_msg;
       result_msg.data = is_cone;
       publisher_->publish(result_msg);
+      std::cout << "Cone detected." << std::endl;
     }
   }
   else
