@@ -59,7 +59,7 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   if (!inliers->indices.empty())
   {
     std::cout << "Cone detected with " << inliers->indices.size() << " inliers." << std::endl; // debug
-    
+
     // logica per i coefficienti per eliminare falsi positivi
     if (coefficients.values.size() > 4)
     {
@@ -68,14 +68,14 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
       {
         double apex_z = coefficients.values[0]; // altezza dell'apice del cono
 
-        if (apex_z < 0.1 || apex_z > 1.5) // altezza dell'apice del cono tra 0.1 e 1.5
-        { 
+        if (apex_z < 3.0 || apex_z > 4.0) // altezza dell'apice del cono tra 3.0 e 4.0
+        {
           std::cout << "Scartato: apice del cono fuori dall'intervallo atteso (Z = " << apex_z << ")." << std::endl;
           is_cone = false;
         }
         else
-          std::cout << "Apice del cono a Z = " << apex_z << std::endl;
-          is_cone = true;
+          std::cout << "Apice del cono a Z = " << apex_z << std::endl; // debug
+        is_cone = true;
       }
 
       // angolo apertura cono
@@ -89,18 +89,19 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
         is_cone = false;
       }
       else
-        std::cout << "Angolo di apertura del cono: " << opening_angle * 180.0 / M_PI << "°" << std::endl;
-        is_cone = true;
+        std::cout << "Angolo di apertura del cono: " << opening_angle * 180.0 / M_PI << "°" << std::endl; // debug
+      is_cone = true;
     }
-    std::cout << "Cone detected!" << std::endl;
+    if (is_cone == true)
+    {
+      // Pubblica il risultato come Bool
+      std_msgs::msg::Bool result_msg;
+      result_msg.data = is_cone;
+      publisher_->publish(result_msg);
+    }
   }
   else
     std::cout << "No cone detected." << std::endl;
-
-  // Pubblica il risultato come Bool
-  std_msgs::msg::Bool result_msg;
-  result_msg.data = is_cone;
-  publisher_->publish(result_msg);
 }
 
 int main(int argc, char *argv[])
