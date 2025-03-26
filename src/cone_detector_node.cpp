@@ -74,8 +74,10 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
           is_cone = false;
         }
         else
+        {
           std::cout << "Apice del cono a Z = " << apex_z << std::endl; // debug
-        is_cone = true;
+          is_cone = true;
+        }
       }
 
       // angolo apertura cono
@@ -89,20 +91,26 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
         is_cone = false;
       }
       else
+      {
         std::cout << "Angolo di apertura del cono: " << opening_angle * 180.0 / M_PI << "°" << std::endl; // debug
-      is_cone = true;
+        is_cone = true;
+      }
     }
     if (is_cone == true)
     {
-      // Pubblica il risultato come Bool
-      std_msgs::msg::Bool result_msg;
-      result_msg.data = is_cone;
-      publisher_->publish(result_msg);
       std::cout << "Cone detected." << std::endl;
     }
+    else
+      std::cout << "No cone detected." << std::endl;
   }
   else
+  {
     std::cout << "No cone detected." << std::endl;
+  }
+  // Pubblica il risultato come Bool
+  std_msgs::msg::Bool result_msg;
+  result_msg.data = is_cone;
+  publisher_->publish(result_msg);
 }
 
 int main(int argc, char *argv[])
