@@ -4405,14 +4405,6 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "/usr/lib/x86_64-linux-gnu/cmake/Qt5Gui/Qt5Gui_QSvgIconPlugin.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "/usr/lib/x86_64-linux-gnu/cmake/Qt5Gui/Qt5Gui_QSvgPlugin.cmake"
-		},
-		{
-			"isExternal" : true,
 			"path" : "/usr/lib/x86_64-linux-gnu/cmake/Qt5Gui/Qt5Gui_QTuioTouchPlugin.cmake"
 		},
 		{

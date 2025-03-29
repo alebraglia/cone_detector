@@ -73,15 +73,15 @@ CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o: CMakeFiles/cone_
 CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o: ../src/cone_detector_node.cpp
 CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o: CMakeFiles/cone_detector_node.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alebraglia/Cuda_clustering/cone_detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o -MF CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o.d -o CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o -c /home/alebraglia/Cuda_clustering/cone_detector/src/cone_detector_node.cpp
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o -MF CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o.d -o CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.o -c /home/alebraglia/Cuda_clustering/cone_detector/src/cone_detector_node.cpp
 
 CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/alebraglia/Cuda_clustering/cone_detector/src/cone_detector_node.cpp > CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/alebraglia/Cuda_clustering/cone_detector/src/cone_detector_node.cpp > CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.i
 
 CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/alebraglia/Cuda_clustering/cone_detector/src/cone_detector_node.cpp -o CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/alebraglia/Cuda_clustering/cone_detector/src/cone_detector_node.cpp -o CMakeFiles/cone_detector_node.dir/src/cone_detector_node.cpp.s
 
 # Object files for target cone_detector_node
 cone_detector_node_OBJECTS = \

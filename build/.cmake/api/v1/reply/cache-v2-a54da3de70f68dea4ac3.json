@@ -327,11 +327,11 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "No help, variable specified on the command line."
+					"value" : "CXX compiler"
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/g++"
+			"value" : "/usr/bin/c++"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER_AR",
@@ -459,7 +459,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/gcc"
+			"value" : "/usr/bin/gcc-12"
 		},
 		{
 			"name" : "CMAKE_C_COMPILER_AR",
@@ -475,7 +475,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/gcc-ar-11"
+			"value" : "/usr/bin/gcc-ar-12"
 		},
 		{
 			"name" : "CMAKE_C_COMPILER_RANLIB",
@@ -491,7 +491,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/gcc-ranlib-11"
+			"value" : "/usr/bin/gcc-ranlib-12"
 		},
 		{
 			"name" : "CMAKE_C_FLAGS",
@@ -685,6 +685,10 @@
 			"name" : "CMAKE_EXPORT_COMPILE_COMMANDS",
 			"properties" : 
 			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
 				{
 					"name" : "HELPSTRING",
 					"value" : "No help, variable specified on the command line."
@@ -2503,7 +2507,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "4"
+			"value" : "14"
 		},
 		{
 			"name" : "MPIEXEC_NUMPROC_FLAG",
@@ -7683,7 +7687,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "alebraglia-VirtualBox"
+			"value" : "alebraglia-Victus-by-HP-Gaming-Laptop-16-r0xxx"
 		},
 		{
 			"name" : "TBB_DIR",

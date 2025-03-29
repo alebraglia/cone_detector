@@ -16,7 +16,8 @@ ConeDetectorNode::ConeDetectorNode() : Node("cone_detector")
 void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
 {
   // Se il numero di punti nella point cloud è inferiore a 10, esce dalla funzione
-  if (msg->width * msg->height < 10)
+  double msg_size = msg->width * msg->height;
+  if (msg_size < 10)
   {
     RCLCPP_WARN(this->get_logger(), "PointCloud troppo piccola, ignorata.");
     return;
@@ -39,7 +40,7 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   seg.setOptimizeCoefficients(true);
   seg.setModelType(pcl::SACMODEL_CONE); // imposta il modello di cono
   seg.setMethodType(pcl::SAC_RANSAC);   // metodo RANSAC
-  seg.setDistanceThreshold(0.03);       // soglia di distanza
+  seg.setDistanceThreshold(0.05);       // soglia di distanza
   seg.setMaxIterations(1000);           // numero massimo di iterazioni
   seg.setNormalDistanceWeight(0.05);    // Peso della distanza rispetto alle normali
 
@@ -54,34 +55,37 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   pcl::PointIndices::Ptr inliers(new pcl::PointIndices()); // indici dei punti inliers ( che appartengono al modello)
   seg.segment(*inliers, coefficients);                     // segmenta la point cloud
 
-  // Determinazione se il cono è stato rilevato
-  bool is_cone = false;
-  if (!inliers->indices.empty())
-  {
-    std::cout << "Cone detected with " << inliers->indices.size() << " inliers." << std::endl; // debug
+  
+  // debug
+  std::cout << "Inliers: " << inliers->indices.size() << std::endl;
+  std::cout << "Punti totali: " << msg_size << std::endl;
+  std::cout << "Rapporto inliners / punti totale: " << inliers->indices.size() / msg_size << std::endl;
+  std::cout << "-------------------------" << std::endl;
+  //
 
+  // Determinazione se il cono è stato rilevato
+  bool is_cone = true;
+
+  if (inliers->indices.size() / msg_size > 0.5)
+  {
     // logica per i coefficienti per eliminare falsi positivi
-    if (coefficients.values.size() > 4)
+    if (coefficients.values.size() == 7) // controllo che ci siano tutti i coefficienti
     {
       // posizione apice
-      if (coefficients.values.size() > 0)
-      {
-        double apex_z = coefficients.values[0]; // altezza dell'apice del cono
+      double apex_z = coefficients.values[2]; // altezza dell'apice del cono
 
-        if (apex_z < 3.0 || apex_z > 4.0) // altezza dell'apice del cono tra 3.0 e 4.0
-        {
-          std::cout << "Scartato: apice del cono fuori dall'intervallo atteso (Z = " << apex_z << ")." << std::endl;
-          is_cone = false;
-        }
-        else
-          std::cout << "Apice del cono a Z = " << apex_z << std::endl; // debug
-        is_cone = true;
+      if (apex_z < 0.4 || apex_z > 0.6) // altezza dell'apice del cono tra 40 e 60 cm
+      {
+        std::cout << "Scartato: apice del cono fuori dall'intervallo atteso (Z = " << apex_z << ")." << std::endl;
+        is_cone = false;
       }
+      else
+        std::cout << "Apice del cono a Z = " << apex_z << std::endl; // debug
 
       // angolo apertura cono
-      double opening_angle = std::abs(coefficients.values[4]); // in radianti
-      double min_angle = 5.0 * M_PI / 180.0;                   // imposto angolo minimo e massimo per il cono tra 5 e 20
-      double max_angle = 20.0 * M_PI / 180.0;
+      double opening_angle = std::abs(coefficients.values[6]); // in radianti
+      double min_angle = 5.0 * M_PI / 180.0;                   // imposto angolo minimo e massimo per il cono tra 5 e 10
+      double max_angle = 10.0 * M_PI / 180.0;
 
       if (opening_angle < min_angle || opening_angle > max_angle)
       {
@@ -90,9 +94,19 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
       }
       else
         std::cout << "Angolo di apertura del cono: " << opening_angle * 180.0 / M_PI << "°" << std::endl; // debug
-      is_cone = true;
     }
-    if (is_cone == true)
+    else
+      std::cout << "Errore: numero di coefficienti non valido." << std::endl;
+
+  }
+  else
+  {
+    std::cout << "Scartato: numero di inliers troppo basso." << std::endl;
+    is_cone = false;
+  }
+
+  // Pubblica il risultato come Bool
+  if (is_cone == true)
     {
       // Pubblica il risultato come Bool
       std_msgs::msg::Bool result_msg;
@@ -100,9 +114,6 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
       publisher_->publish(result_msg);
       std::cout << "Cone detected." << std::endl;
     }
-  }
-  else
-    std::cout << "No cone detected." << std::endl;
 }
 
 int main(int argc, char *argv[])
