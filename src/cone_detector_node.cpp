@@ -32,7 +32,7 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>()); // creo un oggetto per la ricerca dei punti vicini
   ne.setSearchMethod(tree);                                                               // imposto il metodo di ricerca su ne
   pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>());    // creo un oggetto per contenere le normali
-  ne.setKSearch(30);                                                                      // Numero di vicini usati per stimare la normale
+  ne.setKSearch(60);                                                                      // Numero di vicini usati per stimare la normale
   ne.compute(*cloud_normals);                                                             // calcolo delle normali
 
   // Segmentazione per il modello di cono
@@ -40,11 +40,9 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   seg.setOptimizeCoefficients(true);
   seg.setModelType(pcl::SACMODEL_CONE); // imposta il modello di cono
   seg.setMethodType(pcl::SAC_RANSAC);   // metodo RANSAC
-  seg.setDistanceThreshold(0.05);       // soglia di distanza
+  seg.setDistanceThreshold(0.1);       // soglia di distanza
   seg.setMaxIterations(1000);           // numero massimo di iterazioni
   seg.setNormalDistanceWeight(0.05);    // Peso della distanza rispetto alle normali
-
-  // seg.setRadiusLimits(0.06, 0.08);      // imposta i limiti del raggio del cono
 
   // Imposta input cloud e input normals
   seg.setInputCloud(cloud);
@@ -66,7 +64,7 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   // Determinazione se il cono è stato rilevato
   bool is_cone = true;
 
-  if (inliers->indices.size() / msg_size > 0.5)
+  if (true /* inliers->indices.size() / msg_size < 0.6 */)
   {
     // logica per i coefficienti per eliminare falsi positivi
     if (coefficients.values.size() == 7) // controllo che ci siano tutti i coefficienti
@@ -99,11 +97,13 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
       std::cout << "Errore: numero di coefficienti non valido." << std::endl;
 
   }
+  /*
   else
   {
     std::cout << "Scartato: numero di inliers troppo basso." << std::endl;
     is_cone = false;
   }
+  */
 
   // Pubblica il risultato come Bool
   if (is_cone == true)
