@@ -27,6 +27,8 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   pcl::fromROSMsg(*msg, *cloud);
 
   // calcolo delle normali
+  auto normals_start = std::chrono::high_resolution_clock::now(); //calcolo tempo
+
   pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;                                   // oggetto per il calcolo delle normali
   ne.setInputCloud(cloud);                                                                // imposto la point cloud per il calcolo
   pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>()); // creo un oggetto per la ricerca dei punti vicini
@@ -34,15 +36,22 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>());    // creo un oggetto per contenere le normali
   ne.setKSearch(60);                                                                      // Numero di vicini usati per stimare la normale
   ne.compute(*cloud_normals);                                                             // calcolo delle normali
+  
+  auto normals_end = std::chrono::high_resolution_clock::now();
+  auto normals_duration = std::chrono::duration_cast<std::chrono::milliseconds>(normals_end - normals_start).count();
+  std::cout << "Calcolo delle normali: " << normals_duration << " ms" << std::endl; // pubblica tempo
+  
 
   // Segmentazione per il modello di cono
+  auto seg_start = std::chrono::high_resolution_clock::now(); // calcolo tempo
+
   pcl::SACSegmentationFromNormals<pcl::PointXYZ, pcl::Normal> seg; // creo un oggetto per la segmentazione basat sulle normali (ricerca del cono)
   seg.setOptimizeCoefficients(true);
   seg.setModelType(pcl::SACMODEL_CONE); // imposta il modello di cono
   seg.setMethodType(pcl::SAC_RANSAC);   // metodo RANSAC
-  seg.setDistanceThreshold(0.1);       // soglia di distanza
-  seg.setMaxIterations(1000);           // numero massimo di iterazioni
-  seg.setNormalDistanceWeight(0.05);    // Peso della distanza rispetto alle normali
+  seg.setDistanceThreshold(0.1);        // soglia di distanza
+  seg.setMaxIterations(1500);           // numero massimo di iterazioni
+  seg.setNormalDistanceWeight(0.01);    // Peso della distanza rispetto alle normali
 
   // Imposta input cloud e input normals
   seg.setInputCloud(cloud);
@@ -53,11 +62,25 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
   pcl::PointIndices::Ptr inliers(new pcl::PointIndices()); // indici dei punti inliers ( che appartengono al modello)
   seg.segment(*inliers, coefficients);                     // segmenta la point cloud
 
-  
+  auto seg_end = std::chrono::high_resolution_clock::now();
+  auto seg_duration = std::chrono::duration_cast<std::chrono::milliseconds>(seg_end - seg_start).count();
+  std::cout << "Segmentazione: " << seg_duration << " ms" << std::endl;
+
+
   // debug
   std::cout << "Inliers: " << inliers->indices.size() << std::endl;
   std::cout << "Punti totali: " << msg_size << std::endl;
   std::cout << "Rapporto inliners / punti totale: " << inliers->indices.size() / msg_size << std::endl;
+  std::cout << "Cone Model Coefficients:" << std::endl;
+  std::cout << "-------------------------" << std::endl;
+  std::cout << "apex.x           : " << coefficients.values[0] << std::endl;
+  std::cout << "apex.y           : " << coefficients.values[1] << std::endl;
+  std::cout << "apex.z           : " << coefficients.values[2] << std::endl;
+  std::cout << "axis_direction.x : " << coefficients.values[3] << std::endl;
+  std::cout << "axis_direction.y : " << coefficients.values[4] << std::endl;
+  std::cout << "axis_direction.z : " << coefficients.values[5] << std::endl;
+  std::cout << "opening_angle    : " << coefficients.values[6] 
+            << " (rad), " << coefficients.values[6] * 180.0 / M_PI << " (deg)" << std::endl;
   std::cout << "-------------------------" << std::endl;
   //
 
