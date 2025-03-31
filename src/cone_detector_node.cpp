@@ -15,6 +15,9 @@ ConeDetectorNode::ConeDetectorNode() : Node("cone_detector")
 
 void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
 {
+  //tempo totale funzione
+  auto func_start = std::chrono::high_resolution_clock::now(); 
+
   // Se il numero di punti nella point cloud è inferiore a 10, esce dalla funzione
   double msg_size = msg->width * msg->height;
   if (msg_size < 10)
@@ -95,7 +98,7 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
       // posizione apice
       double apex_z = coefficients.values[2]; // altezza dell'apice del cono
 
-      if (apex_z < 0.4 || apex_z > 0.6) // altezza dell'apice del cono tra 40 e 60 cm
+      if (apex_z < 0.45 || apex_z > 0.75) // altezza dell'apice del cono tra 45 e 75 cm
       {
         std::cout << "Scartato: apice del cono fuori dall'intervallo atteso (Z = " << apex_z << ")." << std::endl;
         is_cone = false;
@@ -105,8 +108,8 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
 
       // angolo apertura cono
       double opening_angle = std::abs(coefficients.values[6]); // in radianti
-      double min_angle = 5.0 * M_PI / 180.0;                   // imposto angolo minimo e massimo per il cono tra 5 e 10
-      double max_angle = 10.0 * M_PI / 180.0;
+      double min_angle = 2.0 * M_PI / 180.0;                   
+      double max_angle = 9 * M_PI / 180.0;
 
       if (opening_angle < min_angle || opening_angle > max_angle)
       {
@@ -137,6 +140,10 @@ void ConeDetectorNode::filter(const sensor_msgs::msg::PointCloud2::SharedPtr msg
       publisher_->publish(result_msg);
       std::cout << "Cone detected." << std::endl;
     }
+
+    auto func_end = std::chrono::high_resolution_clock::now();
+    auto func_duration = std::chrono::duration_cast<std::chrono::milliseconds>(func_end - func_start).count();
+    std::cout << "Tempo totale funzione: " << func_duration << " ms" << std::endl; 
 }
 
 int main(int argc, char *argv[])
